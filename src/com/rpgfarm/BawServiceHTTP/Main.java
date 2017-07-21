@@ -51,11 +51,10 @@ public class Main extends JavaPlugin implements Listener {
 	      String data = "";
 	      public void run()
 	      {
-		      System.out.println("[Baw Service] Baw Service HTTP API¿¡ ¿¬°áÇÕ´Ï´Ù.");
 			  try {
 				this.data = get_data();
 			} catch (IOException e) {
-			    System.out.println("[Baw Service] Baw Service HTTP API¿Í ¿¬°áÀÌ ºÒ°¡´ÉÇÕ´Ï´Ù.");
+			    System.out.println("[Baw Service] Baw Service HTTP APIì™€ ì—°ê²°ì´ ë¶ˆê°€ëŠ¥í•©ë‹ˆë‹¤.");
 				e.printStackTrace();
 				
 			}
@@ -82,16 +81,16 @@ public class Main extends JavaPlugin implements Listener {
 				          saveConfig();
 				          Bukkit.dispatchCommand(Bukkit.getConsoleSender(), str);
 				          saver(str);
-				          System.out.println("[Baw Service] Baw ServiceÀ¸·ÎºÎÅÍ ¸í·É¾î ½ÇÇà ¿äÃ»À» Àü´Ş¹Ş¾Ò½À´Ï´Ù.");
+				          System.out.println("[Baw Service] Baw Serviceìœ¼ë¡œë¶€í„° ëª…ë ¹ì–´ ì‹¤í–‰ ìš”ì²­ì„ ì „ë‹¬ë°›ì•˜ìŠµë‹ˆë‹¤.");
 			            }
 			          }
 			          else if (Main.config.getString("setting.id").equals(id))
 			          {
-			            System.out.println("[Baw Service] Baw Service API KEY°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù. ¸í·É¾î ½ÇÇà ¿äÃ»À» ¹«½ÃÇÕ´Ï´Ù. ¼­¹ö¿¡¼­ Àü¼Û¹ŞÀº APIKEY:" + api_key);
+			            System.out.println("[Baw Service] Baw Service API KEYê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ëª…ë ¹ì–´ ì‹¤í–‰ ìš”ì²­ì„ ë¬´ì‹œí•©ë‹ˆë‹¤. ì„œë²„ì—ì„œ ì „ì†¡ë°›ì€ APIKEY:" + api_key);
 			          }
 			          else
 			          {
-			            System.out.println("[Baw Service] Baw Service ID°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù. ¸í·É¾î ¿äÃ»À» ¹«½ÃÇÕ´Ï´Ù. ¼­¹ö¿¡¼­ Àü¼Û¹ŞÀº ID:" + id);
+			            System.out.println("[Baw Service] Baw Service IDê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ëª…ë ¹ì–´ ìš”ì²­ì„ ë¬´ì‹œí•©ë‹ˆë‹¤. ì„œë²„ì—ì„œ ì „ì†¡ë°›ì€ ID:" + id);
 			          }
 			        }
 			      }
@@ -106,10 +105,10 @@ public class Main extends JavaPlugin implements Listener {
 
 	    if (!this.ver.equals(this.getDescription().getVersion()))
 	    {
-	      System.out.println("[Baw Service] Baw Service HTTP API ¾÷µ¥ÀÌÆ® ¹öÀü ¹ß°ß! ¾÷µ¥ÀÌÆ®Àü ¹İµå½Ã ¼­¹ö¸¦ ¹é¾÷ÇÏ°í ¾÷µ¥ÀÌÆ®ÇÏ¼¼¿ä.");
-	      System.out.println("[Baw Service] »õ·Î¿î ¾÷µ¥ÀÌÆ®´Â https://baws.kr/ ¿¡¼­ ÁøÇàÇÒ ¼ö ÀÖ½À´Ï´Ù.");
-	      System.out.println("[Baw Service] ÇöÀç ¹öÀü: " + this.getDescription().getVersion());
-	      System.out.println("[Baw Service] »õ·Î¿î ¹öÀü: " + this.ver);
+	      System.out.println("[Baw Service] Baw Service HTTP API ì—…ë°ì´íŠ¸ ë²„ì „ ë°œê²¬! ì—…ë°ì´íŠ¸ì „ ë°˜ë“œì‹œ ì„œë²„ë¥¼ ë°±ì—…í•˜ê³  ì—…ë°ì´íŠ¸í•˜ì„¸ìš”.");
+	      System.out.println("[Baw Service] ìƒˆë¡œìš´ ì—…ë°ì´íŠ¸ëŠ” https://baws.kr/ ì—ì„œ ì§„í–‰í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+	      System.out.println("[Baw Service] í˜„ì¬ ë²„ì „: " + this.getDescription().getVersion());
+	      System.out.println("[Baw Service] ìƒˆë¡œìš´ ë²„ì „: " + this.ver);
 	    }
 	    config = getConfig();
 	    config.addDefault("lastcommand", "BawServiceCommand");
@@ -119,7 +118,7 @@ public class Main extends JavaPlugin implements Listener {
 	    config.addDefault("setting.id", "BawServiceID");
 	    config.addDefault("setting.api-key", "BawServiceAPI_KEY");
 	    saveConfig();
-	    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[" + ChatColor.GREEN + "Baw Service" + ChatColor.AQUA + "] Baw Service HTTP API v" + this.getDescription().getVersion() + "°¡ È°¼ºÈ­ÁßÀÔ´Ï´Ù. È¯¿µÇÕ´Ï´Ù. " + config.getString("setting.id") + "´Ô");
+	    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[" + ChatColor.GREEN + "Baw Service" + ChatColor.AQUA + "] Baw Service HTTP API v" + this.getDescription().getVersion() + "ê°€ í™œì„±í™”ì¤‘ì…ë‹ˆë‹¤. í™˜ì˜í•©ë‹ˆë‹¤. " + config.getString("setting.id") + "ë‹˜");
 	  }
 	    
 	    
@@ -210,7 +209,7 @@ public class Main extends JavaPlugin implements Listener {
         try
         {
           PrintWriter writer = new PrintWriter("plugins\\BawService\\log.log", "UTF-8");
-          writer.println(stringBuffer.toString() + "[" + frmtdDate + "] " + "BawService ¿ø°İ ÄÜ¼Ö ¸í·É¾î ½ÇÇà: " + fla);
+          writer.println(stringBuffer.toString() + "[" + frmtdDate + "] " + "BawService ì›ê²© ì½˜ì†” ëª…ë ¹ì–´ ì‹¤í–‰: " + fla);
           writer.close();
         }
         catch (FileNotFoundException localFileNotFoundException) {}catch (UnsupportedEncodingException localUnsupportedEncodingException) {}
