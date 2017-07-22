@@ -68,7 +68,6 @@ public class Main extends JavaPlugin implements Listener {
 			        {
 			          String api_key = command.split(";")[0];
 			          String id = command.split(";")[1];
-			          System.out.println(command);
 			          String[] commands = command.replace(api_key + ";" + id + ";", "").split(";");
 			          if ((Main.config.getString("setting.id").equals(id)) && (Main.config.getString("setting.api-key").equals(api_key)))
 			          {
@@ -86,11 +85,11 @@ public class Main extends JavaPlugin implements Listener {
 			          }
 			          else if (Main.config.getString("setting.id").equals(id))
 			          {
-			            System.out.println("[Baw Service] Baw Service API KEY가 일치하지 않습니다. 명령어 실행 요청을 무시합니다. 서버에서 전송받은 APIKEY:" + api_key);
+			            System.out.println("[Baw Service] Baw Service API KEY가 일치하지 않습니다. 명령어 실행 요청을 무시합니다. 서버에서 전송받은 APIKEY:");
 			          }
 			          else
 			          {
-			            System.out.println("[Baw Service] Baw Service ID가 일치하지 않습니다. 명령어 요청을 무시합니다. 서버에서 전송받은 ID:" + id);
+			            System.out.println("[Baw Service] Baw Service ID가 일치하지 않습니다. 명령어 요청을 무시합니다. 서버에서 전송받은 ID:");
 			          }
 			        }
 			      }
