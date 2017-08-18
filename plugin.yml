@@ -1,5 +1,3 @@
 name: BawService
 main: com.rpgfarm.BawServiceHTTP.Main
-version: 0.1-Alpha
-commands:
- BawService:
+version: 0.2

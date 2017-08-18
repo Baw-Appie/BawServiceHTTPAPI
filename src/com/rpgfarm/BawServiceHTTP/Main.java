@@ -16,8 +16,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -160,7 +171,41 @@ public class Main extends JavaPlugin implements Listener {
             out.write(("api_key=" + URLEncoder.encode(config.getString("setting.api-key"),"UTF-8")).getBytes());
             out.write("&".getBytes());
         }
+        
+        // SSL Let's Encrypt 오류 수정
+        
+        TrustManager[] trustAllCerts = { new X509TrustManager()
+        {
+          public X509Certificate[] getAcceptedIssuers()
+          {
+            return null;
+          }
+          
+          public void checkServerTrusted(X509Certificate[] chain, String authType)
+            throws CertificateException
+          {}
+          
+          public void checkClientTrusted(X509Certificate[] chain, String authType)
+            throws CertificateException
+          {}
+        } };
+        SSLContext sc = null;
+		try {
+			sc = SSLContext.getInstance("SSL");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        try {
+			sc.init(null, trustAllCerts, new SecureRandom());
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
+//        출처: http://bobr2.tistory.com/entry/SSL-인증서-없이-https-통신하는-법-예제 [나만의공간]
+        
         try (InputStream in = conn.getInputStream();
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buf = new byte[1024 * 8];
