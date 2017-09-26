@@ -1,0 +1,4 @@
+lastcommand: BawServiceCommand
+setting:
+    id: BawServiceID
+    api-key: BawServiceAPI_KEY
