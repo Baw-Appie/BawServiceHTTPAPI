@@ -65,9 +65,8 @@ public class Main extends JavaPlugin implements Listener {
 			  try {
 				this.data = get_data();
 			} catch (IOException e) {
-			    System.out.println("[Baw Service] Baw Service HTTP API와 연결이 불가능합니다.");
+			    System.out.println("[Baw Service] 다음과 같은 오류로 Baw Service HTTP API 서비스에 연결할 수 없습니다.");
 				e.printStackTrace();
-				
 			}
 			  
 
@@ -91,16 +90,16 @@ public class Main extends JavaPlugin implements Listener {
 				          saveConfig();
 				          Bukkit.dispatchCommand(Bukkit.getConsoleSender(), str);
 				          saver(str);
-				          System.out.println("[Baw Service] Baw Service으로부터 명령어 실행 요청을 전달받았습니다.");
+				          System.out.println("[Baw Service] Baw Service API 명령어 실행: "+str);
 			            }
 			          }
 			          else if (Main.config.getString("setting.id").equals(id))
 			          {
-			            System.out.println("[Baw Service] Baw Service API KEY가 일치하지 않습니다. 명령어 실행 요청을 무시합니다. 서버에서 전송받은 APIKEY:");
+			            System.out.println("[Baw Service] 보안을 위하여 전송받은 데이터를 검증하였으나, 잘못된 Baw Service API KEY 입니다. 요청을 무시합니다.");
 			          }
 			          else
 			          {
-			            System.out.println("[Baw Service] Baw Service ID가 일치하지 않습니다. 명령어 요청을 무시합니다. 서버에서 전송받은 ID:");
+			            System.out.println("[Baw Service] 보안을 위하여 전송받은 데이터를 검증하였으나, 잘못된 Baw Service ID 입니다. 요청을 무시합니다.");
 			          }
 			        }
 			      }
@@ -111,24 +110,25 @@ public class Main extends JavaPlugin implements Listener {
 	    , 0L, 1200L);
 	    
 	    
-	    this.ver = getOpenStreamHTML("https://baws.kr/api/versioncheckerHTTP.php");
+	    this.ver = getOpenStreamHTML("https://baws.kr/API/GetHTTPAPIVersion");
 
 	    if (!this.ver.equals(this.getDescription().getVersion()))
 	    {
-	      System.out.println("[Baw Service] Baw Service HTTP API 업데이트 버전 발견! 업데이트전 반드시 서버를 백업하고 업데이트하세요.");
-	      System.out.println("[Baw Service] 새로운 업데이트는 https://baws.kr/ 에서 진행할 수 있습니다.");
-	      System.out.println("[Baw Service] 현재 버전: " + this.getDescription().getVersion());
-	      System.out.println("[Baw Service] 새로운 버전: " + this.ver);
+	        System.out.println("[Baw Service Updater] Baw Service API 업데이트 버전 발견! 업데이트전 반드시 서버를 백업하고 업데이트하세요.");
+	        System.out.println("[Baw Service Updater] Baw Service API는 되도록 최신 버전을 유지할 수 있도록 해주세요.");
+	        System.out.println("[Baw Service Updater] 현재 버전: " + this.getDescription().getVersion());
+	        System.out.println("[Baw Service Updater] 새로운 버전: " + this.ver);
 	    }
+	    System.out.println("[Baw Service] Baw Service API 플러그인 콘피그 초기화중");
 	    config = getConfig();
 	    config.addDefault("lastcommand", "BawServiceCommand");
+	    config.addDefault("setting.id", "BawServiceID");
+	    config.addDefault("setting.api-key", "BawServiceAPI_KEY");
 	    config.options().copyDefaults(true);
 	    saveConfig();
 	    saveDefaultConfig();
-	    config.addDefault("setting.id", "BawServiceID");
-	    config.addDefault("setting.api-key", "BawServiceAPI_KEY");
-	    saveConfig();
-	    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[" + ChatColor.GREEN + "Baw Service" + ChatColor.AQUA + "] Baw Service HTTP API v" + this.getDescription().getVersion() + "가 활성화중입니다. 환영합니다. " + config.getString("setting.id") + "님");
+	    System.out.println("[Baw Service] Baw Service API v" + this.getDescription().getVersion() + "가 활성화중입니다. 환영합니다. " + config.getString("setting.id") + "님");
+	    System.out.println("[Baw Service] 현재 활성화중인 Baw Service API는 Socket 사용 버전입니다.");
 	  }
 	    
 	    
@@ -157,7 +157,7 @@ public class Main extends JavaPlugin implements Listener {
     
     public String get_data() throws IOException
     {
-    	URL url = new URL("https://baws.kr/api/getlist.php");
+    	URL url = new URL("https://baws.kr/API/GetList");
         
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         
@@ -253,7 +253,7 @@ public class Main extends JavaPlugin implements Listener {
         try
         {
           PrintWriter writer = new PrintWriter("plugins\\BawService\\log.log", "UTF-8");
-          writer.println(stringBuffer.toString() + "[" + frmtdDate + "] " + "Baw Service에서 원격으로 명령어 실행 요청을 전달받았습니다: " + fla);
+          writer.println(stringBuffer.toString() + "[" + frmtdDate + "] " + "Baw Service API "+this.getDescription().getVersion()+" 원격 명령어 실행: " + fla);
           writer.close();
         }
         catch (FileNotFoundException localFileNotFoundException) {}catch (UnsupportedEncodingException localUnsupportedEncodingException) {}
