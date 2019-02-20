@@ -128,7 +128,7 @@ public class Main extends JavaPlugin implements Listener {
 	    saveConfig();
 	    saveDefaultConfig();
 	    System.out.println("[Baw Service] Baw Service API v" + this.getDescription().getVersion() + "가 활성화중입니다. 환영합니다. " + config.getString("setting.id") + "님");
-	    System.out.println("[Baw Service] 현재 활성화중인 Baw Service API는 Socket 사용 버전입니다.");
+	    System.out.println("[Baw Service] 현재 활성화중인 Baw Service API는 HTTP 사용 버전입니다.");
 	  }
 	    
 	    
