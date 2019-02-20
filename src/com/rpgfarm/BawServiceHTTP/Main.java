@@ -70,7 +70,7 @@ public class Main extends JavaPlugin implements Listener {
 			}
 			  
 
-			  String[] datas = data.split("'/");
+			  String[] datas = data.split("/");
 			  for( String command : datas ){
 			      if (command.indexOf(";") != -1)
 			      {
@@ -158,11 +158,8 @@ public class Main extends JavaPlugin implements Listener {
     public String get_data() throws IOException
     {
     	URL url = new URL("https://baws.kr/API/GetList");
-        
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        
         conn.setRequestMethod("POST");
-        
         conn.setDoOutput(true);
     
         try (OutputStream out = conn.getOutputStream()) {
@@ -173,7 +170,6 @@ public class Main extends JavaPlugin implements Listener {
         }
         
         // SSL Let's Encrypt 오류 수정
-        
         TrustManager[] trustAllCerts = { new X509TrustManager()
         {
           public X509Certificate[] getAcceptedIssuers()
@@ -203,8 +199,7 @@ public class Main extends JavaPlugin implements Listener {
 			e.printStackTrace();
 		}
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-//        출처: http://bobr2.tistory.com/entry/SSL-인증서-없이-https-통신하는-법-예제 [나만의공간]
+//      출처: http://bobr2.tistory.com/entry/SSL-인증서-없이-https-통신하는-법-예제 [나만의공간]
         
         try (InputStream in = conn.getInputStream();
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
