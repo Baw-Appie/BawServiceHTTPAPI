@@ -2,3 +2,4 @@ name: BawService
 main: com.rpgfarm.BawServiceHTTP.Main
 author: Baw_Appie
 version: 1.0.1
+api-version: 1.13
