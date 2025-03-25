@@ -111,9 +111,9 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void saver(String fla) {
-        File f = new File("plugins\\BawService\\log.log");
+        File f = new File("plugins/BawService/log.log");
         if (!f.exists()) {
-            new File("plugins\\BawService\\").mkdirs();
+            new File("plugins/BawService/").mkdirs();
             try {
                 f.createNewFile();
             } catch (IOException e) {
@@ -123,9 +123,9 @@ public class Main extends JavaPlugin implements Listener {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm");
         Date date = new Date();
         try {
-            File file = new File("plugins\\BawService\\log.log");
+            File file = new File("plugins/BawService/log.log");
             FileReader fileReader = new FileReader(file);
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("plugins\\BawService\\log.log"), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("plugins/BawService/log.log"), StandardCharsets.UTF_8));
             StringBuilder stringBuffer = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
@@ -135,8 +135,8 @@ public class Main extends JavaPlugin implements Listener {
             fileReader.close();
             String frmtdDate = dateFormat.format(date);
             try {
-                PrintWriter writer = new PrintWriter("plugins\\BawService\\log.log", StandardCharsets.UTF_8);
-                writer.println(stringBuffer + "[" + frmtdDate + "] " + "Baw Service API "+this.getDescription().getVersion()+" 원격 명령어 실행: " + fla);
+                PrintWriter writer = new PrintWriter("plugins/BawService/log.log", StandardCharsets.UTF_8);
+                writer.println(stringBuffer + "[" + frmtdDate + "] " + "Baw Service 원격 명령어 실행: " + fla);
                 writer.close();
             } catch (FileNotFoundException | UnsupportedEncodingException ignored) {}
         } catch (IOException ignored) {}
