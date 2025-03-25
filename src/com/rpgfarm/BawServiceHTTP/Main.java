@@ -106,7 +106,7 @@ public class Main extends JavaPlugin implements Listener {
             byte[] buf = new byte[1024 * 8];
             int length;
             while ((length = in.read(buf)) != -1) out.write(buf, 0, length);
-            return out.toString(StandardCharsets.UTF_8);
+            return out.toString("UTF-8");
         }
     }
 
@@ -135,7 +135,7 @@ public class Main extends JavaPlugin implements Listener {
             fileReader.close();
             String frmtdDate = dateFormat.format(date);
             try {
-                PrintWriter writer = new PrintWriter("plugins/BawService/log.log", StandardCharsets.UTF_8);
+                PrintWriter writer = new PrintWriter("plugins/BawService/log.log", "UTF-8");
                 writer.println(stringBuffer + "[" + frmtdDate + "] " + "Baw Service 원격 명령어 실행: " + fla);
                 writer.close();
             } catch (FileNotFoundException | UnsupportedEncodingException ignored) {}
