@@ -29,6 +29,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,8 +74,25 @@ public class Main extends JavaPlugin implements Listener {
                 saver(command);
             }
         }, 0L, 1200L);
+        Bukkit.getServer().getPluginManager().registerEvents(this, this);
     }
 
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.isOp()) {
+            sender.sendMessage("관리자만 사용할 수 있습니다.");
+            return false;
+        }
+        if (command.getName().equalsIgnoreCase("bawservice")) {
+            if (args.length == 0) {
+                sender.sendMessage("/bawservice reload: 설정을 다시 불러옵니다.");
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                config = getConfig();
+                sender.sendMessage("설정을 다시 불러왔습니다.");
+                getLogger().info("[Baw Service] 설정을 다시 불러왔습니다.");
+            }
+        }
+        return false;
+    }
 
     public String getData() throws IOException {
     	URL url = new URL("https://monetize.stella-api.dev/APILookup/"+config.getString("setting.api-key"));
