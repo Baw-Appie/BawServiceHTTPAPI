@@ -68,6 +68,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "Baw Service API에 오류가 있습니다.");
+                e.printStackTrace();
             }
         });
         this.serverThread.start();
