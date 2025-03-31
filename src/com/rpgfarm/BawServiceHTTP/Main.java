@@ -31,26 +31,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class Main extends JavaPlugin implements Listener {
-	public static FileConfiguration config;
+    public static FileConfiguration config;
     Thread serverThread;
 
     public void onEnable() {
         Logger logger = getLogger();
-	    logger.info("Baw Service API 플러그인 사용을 환영합니다.");
-	    config = getConfig();
-	    config.addDefault("lastcommand", "BawServiceCommand");
-	    config.addDefault("setting.api-key", "BawServiceAPI_KEY");
-	    config.addDefault("setting.port", "21080");
-	    config.options().copyDefaults(true);
-	    saveConfig();
-	    saveDefaultConfig();
-	    logger.info("현재 Baw Service HTTP API " + this.getDescription().getVersion() + "(을)를 사용하고 있습니다.");
+        logger.info("Baw Service API 플러그인 사용을 환영합니다.");
+        config = getConfig();
+        config.addDefault("lastcommand", "BawServiceCommand");
+        config.addDefault("setting.api-key", "BawServiceAPI_KEY");
+        config.addDefault("setting.port", "21080");
+        config.options().copyDefaults(true);
+        saveConfig();
+        saveDefaultConfig();
+        logger.info("현재 Baw Service HTTP API " + this.getDescription().getVersion() + "(을)를 사용하고 있습니다.");
 
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::runWebCheck, 0L, 1200L);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         startSocketThread();
     }
-    
+
     public void startSocketThread() {
         this.serverThread = new Thread(() -> {
             int port = Integer.parseInt(config.getString("setting.port"));
@@ -73,12 +73,12 @@ public class Main extends JavaPlugin implements Listener {
         });
         this.serverThread.start();
     }
-    
+
     public void stopSocketThread() {
         getLogger().info("Baw Service API 서버를 종료합니다.");
         this.serverThread.interrupt();
     }
-    
+
     public void onDisable() {
         stopSocketThread();
         getLogger().info("Baw Service API를 이용해주셔서 감사합니다.");
@@ -102,7 +102,7 @@ public class Main extends JavaPlugin implements Listener {
         }
         return false;
     }
-    
+
     public void runWebCheck() {
         Logger logger = getLogger();
         String data;
@@ -130,32 +130,32 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public String getData() throws IOException {
-    	URL url = new URL("https://monetize.stella-api.dev/APILookup/"+config.getString("setting.api-key"));
+        URL url = new URL("https://monetize.stella-api.dev/APILookup/"+config.getString("setting.api-key"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setDoOutput(true);
-        
+
         // SSL Let's Encrypt 오류 수정
         TrustManager[] trustAllCerts = {
-            new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
 
-                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-            }
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+                }
         };
-        
-		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new SecureRandom());
+
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         try (InputStream in = conn.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buf = new byte[1024 * 8];
             int length;
