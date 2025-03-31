@@ -1,3 +1,4 @@
 lastcommand: BawServiceCommand
 setting:
     api-key: BawServiceAPI_KEY
+    port: 21080

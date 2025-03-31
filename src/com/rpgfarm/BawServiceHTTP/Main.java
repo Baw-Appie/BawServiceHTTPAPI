@@ -1,19 +1,13 @@
 package com.rpgfarm.BawServiceHTTP;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -38,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin implements Listener {
 	public static FileConfiguration config;
+    Thread serverThread;
 
     public void onEnable() {
         Logger logger = getLogger();
@@ -45,36 +40,47 @@ public class Main extends JavaPlugin implements Listener {
 	    config = getConfig();
 	    config.addDefault("lastcommand", "BawServiceCommand");
 	    config.addDefault("setting.api-key", "BawServiceAPI_KEY");
+	    config.addDefault("setting.port", "21080");
 	    config.options().copyDefaults(true);
 	    saveConfig();
 	    saveDefaultConfig();
 	    logger.info("현재 Baw Service HTTP API " + this.getDescription().getVersion() + "(을)를 사용하고 있습니다.");
 
-        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-            String data;
-            try {
-                logger.log(Level.OFF, "Baw Service API 서버에 연결 중 입니다...");
-                data = getData();
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, "Baw Service HTTP API 서비스에 연결할 수 없습니다.");
-                e.printStackTrace();
-                return;
-            }
-            if(data.equals("ERROR")) {
-                logger.log(Level.WARNING, "Baw Service API에 잘못된 API 키가 설정되었습니다. config.yml 파일을 확인하세요.");
-                return;
-            }
-            String[] datas = data.split("\n");
-            for(String command : datas){
-                if(command.isEmpty()) continue;
-                logger.log(Level.FINE, "Baw Service API 명령어 실행: "+command);
-                getConfig().set("lastcommand", command);
-                saveConfig();
-                Bukkit.getServer().getScheduler().runTask(Main.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-                saver(command);
-            }
-        }, 0L, 1200L);
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::runWebCheck, 0L, 1200L);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
+        startSocketThread();
+    }
+    
+    public void startSocketThread() {
+        this.serverThread = new Thread(() -> {
+            int port = Integer.parseInt(config.getString("setting.port"));
+            getLogger().info("Baw Service API 서버를 시작합니다. ("+port+")");
+            try (ServerSocket server = new ServerSocket(port)) {
+                while (true) {
+                    Socket client = server.accept();
+                    OutputStreamWriter osr = new OutputStreamWriter(client.getOutputStream());
+                    BufferedWriter bw = new BufferedWriter(osr);
+                    PrintWriter pw = new PrintWriter(bw);
+                    pw.println("OK");
+                    pw.flush();
+                    client.close();
+                    runWebCheck();
+                }
+            } catch (IOException e) {
+                getLogger().log(Level.SEVERE, "Baw Service API에 오류가 있습니다.");
+            }
+        });
+        this.serverThread.start();
+    }
+    
+    public void stopSocketThread() {
+        getLogger().info("Baw Service API 서버를 종료합니다.");
+        this.serverThread.interrupt();
+    }
+    
+    public void onDisable() {
+        stopSocketThread();
+        getLogger().info("Baw Service API를 이용해주셔서 감사합니다.");
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -87,11 +93,39 @@ public class Main extends JavaPlugin implements Listener {
                 sender.sendMessage("/bawservice reload: 설정을 다시 불러옵니다.");
             } else if (args[0].equalsIgnoreCase("reload")) {
                 config = getConfig();
+                stopSocketThread();
+                startSocketThread();
                 sender.sendMessage("설정을 다시 불러왔습니다.");
-                getLogger().info("[Baw Service] 설정을 다시 불러왔습니다.");
+                getLogger().info("설정을 다시 불러왔습니다.");
             }
         }
         return false;
+    }
+    
+    public void runWebCheck() {
+        Logger logger = getLogger();
+        String data;
+        try {
+            logger.log(Level.OFF, "Baw Service API 서버에 연결 중 입니다...");
+            data = getData();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Baw Service HTTP API 서비스에 연결할 수 없습니다.");
+            e.printStackTrace();
+            return;
+        }
+        if(data.equals("ERROR")) {
+            logger.log(Level.WARNING, "Baw Service API에 잘못된 API 키가 설정되었습니다. config.yml 파일을 확인하세요.");
+            return;
+        }
+        String[] datas = data.split("\n");
+        for(String command : datas){
+            if(command.isEmpty()) continue;
+            logger.log(Level.FINE, "Baw Service API 명령어 실행: "+command);
+            getConfig().set("lastcommand", command);
+            saveConfig();
+            Bukkit.getServer().getScheduler().runTask(Main.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+            saver(command);
+        }
     }
 
     public String getData() throws IOException {
@@ -144,7 +178,7 @@ public class Main extends JavaPlugin implements Listener {
         try {
             File file = new File("plugins/BawService/log.log");
             FileReader fileReader = new FileReader(file);
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("plugins/BawService/log.log"), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("plugins/BawService/log.log")), StandardCharsets.UTF_8));
             StringBuilder stringBuffer = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
