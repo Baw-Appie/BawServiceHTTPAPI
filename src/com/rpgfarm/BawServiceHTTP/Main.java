@@ -34,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin implements Listener {
     public static FileConfiguration config;
     Thread serverThread;
+    ServerSocket serverSocket;
 
     public void onEnable() {
         Logger logger = getLogger();
@@ -57,8 +58,11 @@ public class Main extends JavaPlugin implements Listener {
             int port = Integer.parseInt(config.getString("setting.port"));
             getLogger().info("Baw Service API 서버를 시작합니다. ("+port+")");
             try (ServerSocket server = new ServerSocket(port)) {
-                while (true) {
-                    Socket client = server.accept();
+                this.serverSocket = server;
+                serverSocket.setReuseAddress(true);
+                while (serverSocket.isBound()) {
+                    Socket client;
+                    try { client = server.accept(); } catch (IOException e) { continue; }
                     OutputStreamWriter osr = new OutputStreamWriter(client.getOutputStream());
                     BufferedWriter bw = new BufferedWriter(osr);
                     PrintWriter pw = new PrintWriter(bw);
@@ -78,6 +82,7 @@ public class Main extends JavaPlugin implements Listener {
     public void stopSocketThread() {
         getLogger().info("Baw Service API 서버를 종료합니다.");
         this.serverThread.interrupt();
+        try {this.serverSocket.close(); } catch (IOException ignored) {}
     }
 
     public void onDisable() {
