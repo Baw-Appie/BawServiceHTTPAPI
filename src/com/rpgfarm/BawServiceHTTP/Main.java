@@ -22,6 +22,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
+import com.rpgfarm.BawServiceHTTP.events.MonetizePaymentEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -125,6 +126,7 @@ public class Main extends JavaPlugin implements Listener {
             getConfig().set("lastcommand", command);
             saveConfig();
             Bukkit.getServer().getScheduler().runTask(Main.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+            Bukkit.getPluginManager().callEvent(new MonetizePaymentEvent(command));
             saver(command);
         }
     }
