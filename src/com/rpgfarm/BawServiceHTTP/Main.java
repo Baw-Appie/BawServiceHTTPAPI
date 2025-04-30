@@ -130,8 +130,10 @@ public class Main extends JavaPlugin implements Listener {
             logger.log(Level.FINE, "Baw Service API 명령어 실행: "+command);
             getConfig().set("lastcommand", command);
             saveConfig();
-            Bukkit.getServer().getScheduler().runTask(Main.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-            Bukkit.getPluginManager().callEvent(new MonetizePaymentEvent(command));
+            Bukkit.getServer().getScheduler().runTask(Main.this, () -> {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                Bukkit.getPluginManager().callEvent(new MonetizePaymentEvent(command));
+            });
             saver(command);
         }
     }
