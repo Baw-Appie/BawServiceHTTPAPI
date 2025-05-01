@@ -38,15 +38,14 @@ public class Main extends JavaPlugin implements Listener {
 
     public void onEnable() {
         Logger logger = getLogger();
-        logger.info("Baw Service API 플러그인 사용을 환영합니다.");
+        logger.info("Minehub Monetize API 플러그인 사용을 환영합니다.");
         config = getConfig();
-        config.addDefault("lastcommand", "BawServiceCommand");
-        config.addDefault("setting.api-key", "BawServiceAPI_KEY");
-        config.addDefault("setting.port", "21080");
+        config.addDefault("setting.api-key", "MinehubMonetizeAPI_KEY");
+        config.addDefault("setting.port", 21080);
         config.options().copyDefaults(true);
         saveConfig();
         saveDefaultConfig();
-        logger.info("현재 Baw Service HTTP API " + this.getDescription().getVersion() + "(을)를 사용하고 있습니다.");
+        logger.info("현재 Minehub Monetize HTTP API " + this.getDescription().getVersion() + "(을)를 사용하고 있습니다.");
 
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::runWebCheck, 0L, 1200L);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -56,7 +55,7 @@ public class Main extends JavaPlugin implements Listener {
     public void startSocketThread() {
         this.serverThread = new Thread(() -> {
             int port = Integer.parseInt(config.getString("setting.port"));
-            getLogger().info("Baw Service API 서버를 시작합니다. ("+port+")");
+            getLogger().info("Minehub Monetize API Listener 서버를 시작합니다. ("+port+")");
             try (ServerSocket server = new ServerSocket(port)) {
                 this.serverSocket = server;
                 serverSocket.setReuseAddress(true);
@@ -72,7 +71,7 @@ public class Main extends JavaPlugin implements Listener {
                     runWebCheck();
                 }
             } catch (IOException e) {
-                getLogger().log(Level.SEVERE, "Baw Service API에 오류가 있습니다.");
+                getLogger().log(Level.SEVERE, "Minehub Monetize API Listener에 오류가 있습니다.");
                 e.printStackTrace();
             }
         });
@@ -80,14 +79,14 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void stopSocketThread() {
-        getLogger().info("Baw Service API 서버를 종료합니다.");
+        getLogger().info("Minehub Monetize API Listener 서버를 종료합니다.");
         this.serverThread.interrupt();
         try {this.serverSocket.close(); } catch (IOException ignored) {}
     }
 
     public void onDisable() {
         stopSocketThread();
-        getLogger().info("Baw Service API를 이용해주셔서 감사합니다.");
+        getLogger().info("Minehub Monetize API Listener를 이용해주셔서 감사합니다.");
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -95,9 +94,9 @@ public class Main extends JavaPlugin implements Listener {
             sender.sendMessage("관리자만 사용할 수 있습니다.");
             return false;
         }
-        if (command.getName().equalsIgnoreCase("bawservice")) {
+        if (command.getName().equalsIgnoreCase("minehubmonetize")) {
             if (args.length == 0) {
-                sender.sendMessage("/bawservice reload: 설정을 다시 불러옵니다.");
+                sender.sendMessage("/minehubmonetize reload: 설정을 다시 불러옵니다.");
             } else if (args[0].equalsIgnoreCase("reload")) {
                 config = getConfig();
                 stopSocketThread();
@@ -113,22 +112,21 @@ public class Main extends JavaPlugin implements Listener {
         Logger logger = getLogger();
         String data;
         try {
-            logger.log(Level.OFF, "Baw Service API 서버에 연결 중 입니다...");
+            logger.log(Level.OFF, "Minehub Monetize API 서버에 연결 중 입니다...");
             data = getData();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Baw Service HTTP API 서비스에 연결할 수 없습니다.");
+            logger.log(Level.SEVERE, "Minehub Monetize HTTP API 서비스에 연결할 수 없습니다.");
             e.printStackTrace();
             return;
         }
         if(data.equals("ERROR")) {
-            logger.log(Level.WARNING, "Baw Service API에 잘못된 API 키가 설정되었습니다. config.yml 파일을 확인하세요.");
+            logger.log(Level.WARNING, "Minehub Monetize API에 잘못된 API 키가 설정되었습니다. config.yml 파일을 확인하세요.");
             return;
         }
         String[] datas = data.split("\n");
         for(String command : datas){
             if(command.isEmpty()) continue;
-            logger.log(Level.FINE, "Baw Service API 명령어 실행: "+command);
-            getConfig().set("lastcommand", command);
+            logger.log(Level.FINE, "Minehub Monetize API 명령어 실행: "+command);
             saveConfig();
             Bukkit.getServer().getScheduler().runTask(Main.this, () -> {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
@@ -146,14 +144,14 @@ public class Main extends JavaPlugin implements Listener {
 
         // SSL Let's Encrypt 오류 수정
         TrustManager[] trustAllCerts = {
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
                 }
+
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+            }
         };
 
         try {
@@ -174,9 +172,9 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void saver(String fla) {
-        File f = new File("plugins/BawService/log.log");
+        File f = new File("plugins/MinehubMonetize/log.log");
         if (!f.exists()) {
-            new File("plugins/BawService/").mkdirs();
+            new File("plugins/MinehubMonetize/").mkdirs();
             try {
                 f.createNewFile();
             } catch (IOException e) {
@@ -186,9 +184,9 @@ public class Main extends JavaPlugin implements Listener {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm");
         Date date = new Date();
         try {
-            File file = new File("plugins/BawService/log.log");
+            File file = new File("plugins/MinehubMonetize/log.log");
             FileReader fileReader = new FileReader(file);
-            BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("plugins/BawService/log.log")), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("plugins/MinehubMonetize/log.log")), StandardCharsets.UTF_8));
             StringBuilder stringBuffer = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
@@ -198,8 +196,8 @@ public class Main extends JavaPlugin implements Listener {
             fileReader.close();
             String frmtdDate = dateFormat.format(date);
             try {
-                PrintWriter writer = new PrintWriter("plugins/BawService/log.log", "UTF-8");
-                writer.println(stringBuffer + "[" + frmtdDate + "] " + "Baw Service 원격 명령어 실행: " + fla);
+                PrintWriter writer = new PrintWriter("plugins/MinehubMonetize/log.log", "UTF-8");
+                writer.println(stringBuffer + "[" + frmtdDate + "] " + "Minehub Monetize 원격 명령어 실행: " + fla);
                 writer.close();
             } catch (FileNotFoundException | UnsupportedEncodingException ignored) {}
         } catch (IOException ignored) {}
